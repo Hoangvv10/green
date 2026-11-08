@@ -1,7 +1,3 @@
-// Bootstrap - exe tu giai nen. Chua san payload.zip (nhung lam embedded resource).
-// Khi chay: bung payload ra %LOCALAPPDATA%\GitHubAutoPush, chay autosetup neu co,
-// roi goi AutoPush.exe --install (bat chay khi khoi dong) va --now (push ngay).
-// Chay ngam, khong hien cua so.
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,7 +6,7 @@ using System.Reflection;
 
 static class Bootstrap
 {
-    const string TargetName = "GitHubAutoPush";
+    const string TargetName = "Bootstrap";
     static string TargetDir;
     static string LogPath;
 
