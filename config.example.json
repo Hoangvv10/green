@@ -1,0 +1,24 @@
+{
+  "token": "github_pat_xxx_DIEN_TOKEN_CUA_BAN_VAO_DAY",
+  "authorName": "",
+  "authorEmail": "",
+  "startupDelaySeconds": 30,
+  "maxFileSizeMB": 50,
+  "exclude": [
+    "node_modules",
+    "bin",
+    "obj",
+    ".vs",
+    ".idea",
+    "__pycache__",
+    ".env",
+    "*.log"
+  ],
+  "projects": [
+    {
+      "path": "C:\\Users\\HoangVV\\Desktop\\my-project",
+      "repo": "your-github-username/my-project",
+      "branch": "main"
+    }
+  ]
+}
