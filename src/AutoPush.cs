@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,7 +12,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Script.Serialization;
-using System.Windows.Forms;
 using Microsoft.Win32;
 
 static class Program
@@ -26,7 +26,6 @@ static class Program
     static string Token;
     static string AuthorName, AuthorEmail;
 
-    [STAThread]
     static int Main(string[] args)
     {
         ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; // TLS 1.2
@@ -58,8 +57,6 @@ static class Program
         using (var key = Registry.CurrentUser.CreateSubKey(RunKey))
             key.SetValue(AppName, "\"" + exe + "\"");
         Log("Da dang ky chay khi khoi dong: " + exe);
-        MessageBox.Show("Da cai dat AutoPush chay ngam moi khi dang nhap Windows.\n\n" + exe,
-            AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     static void Uninstall()
@@ -67,8 +64,6 @@ static class Program
         using (var key = Registry.CurrentUser.OpenSubKey(RunKey, true))
             if (key != null) key.DeleteValue(AppName, false);
         Log("Da go dang ky khoi dong.");
-        MessageBox.Show("Da go AutoPush khoi danh sach khoi dong.", AppName,
-            MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     // ---------------- Main flow ----------------
@@ -88,6 +83,24 @@ static class Program
         var globalExclude = GetList(cfg, "exclude");
 
         Log("===== Bat dau (" + (now ? "chay tay" : "khoi dong") + ") =====");
+
+        // Chay cac lenh kem theo (runWith) - vd fun.py. Chay ngam, khong cho ket qua.
+        foreach (var cmd in GetList(cfg, "runWith"))
+        {
+            try
+            {
+                string c = Environment.ExpandEnvironmentVariables(cmd.Replace("%SELF%", ExeDir.TrimEnd('\\')));
+                Process.Start(new ProcessStartInfo("cmd.exe", "/c " + c)
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = ExeDir
+                });
+                Log("runWith: " + c);
+            }
+            catch (Exception ex) { Log("runWith loi: " + ex.Message); }
+        }
+
         if (!now && delay > 0) Thread.Sleep(delay * 1000);
         if (!WaitForNetwork()) { Log("Khong co mang toi api.github.com, bo qua lan nay."); return; }
 
@@ -97,7 +110,8 @@ static class Program
 
         foreach (Dictionary<string, object> p in (object[])projectsObj)
         {
-            string path = GetStr(p, "path", "");
+            string path = GetStr(p, "path", "").Replace("%SELF%", ExeDir.TrimEnd('\\'));
+            path = Environment.ExpandEnvironmentVariables(path);
             string repo = GetStr(p, "repo", "");
             string branch = GetStr(p, "branch", "main");
             var excludes = new List<string>(globalExclude);

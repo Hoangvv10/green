@@ -31,5 +31,25 @@ Log ghi vào `dist\autopush.log`.
 - Repo trống được tự khởi tạo. Branch chưa có sẽ được tạo mới.
 - Nếu thư mục local trống thì bỏ qua để tránh xoá sạch repo.
 
+## Đóng gói 1 file để mang sang máy khác (Bootstrap.exe)
+Gộp toàn bộ source + token vào **một file exe tự giải nén**. Mang sang máy phụ, chạy là nó tự bung source ra đĩa, bật autostart và push.
+
+Trên máy chính:
+```powershell
+# dist\config.json phải đã có token hợp lệ trước
+.\build.ps1 -Pack "C:\duong-dan\toi\source-cua-ban" -Repo user/repo -Branch main
+```
+Tùy chọn `-Setup script.ps1` (hoặc `.cmd`): script này được chạy trên máy phụ ngay sau khi giải nén, trước khi push — dùng để cài dependencies, v.v.
+
+Kết quả: `dist\Bootstrap.exe`. Trên máy phụ chỉ cần chạy file này một lần. Nó sẽ:
+1. Giải nén source + AutoPush.exe + config.json vào `%LOCALAPPDATA%\GitHubAutoPush\` (chạy ngầm, không cửa sổ).
+2. Chạy `autosetup.*` nếu có.
+3. Đăng ký AutoPush chạy mỗi lần đăng nhập, rồi push ngay.
+
+Log trên máy phụ: `%LOCALAPPDATA%\GitHubAutoPush\bootstrap.log` và `autopush.log`.
+
+`%SELF%` trong `path` của config = thư mục chứa AutoPush.exe, nên config chạy được trên mọi máy dù ổ đĩa khác nhau.
+
 ## Lưu ý bảo mật
-Token nằm dạng plain text trong `config.json`, nên chỉ cấp quyền cho đúng các repo cần push.
+- Token nằm dạng plain text trong `config.json`, nên chỉ cấp quyền cho đúng các repo cần push.
+- **Bootstrap.exe có nhúng token.** Ai giải nén file này cũng lấy được token của bạn → chỉ dùng trên các máy của chính bạn, đừng chia sẻ ra ngoài.
