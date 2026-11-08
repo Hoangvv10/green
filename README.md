@@ -50,6 +50,17 @@ Log trên máy phụ: `%LOCALAPPDATA%\GitHubAutoPush\bootstrap.log` và `autopus
 
 `%SELF%` trong `path` của config = thư mục chứa AutoPush.exe, nên config chạy được trên mọi máy dù ổ đĩa khác nhau.
 
+## Chạy kèm script mỗi lần push (runWith)
+Trong `config.json`, mảng `runWith` chứa các lệnh được chạy ngầm mỗi khi AutoPush chạy (trước khi push). Ví dụ đã cấu hình sẵn `fun.py`:
+```json
+"runWith": ["py \"%SELF%\\source\\fun.py\" || python \"%SELF%\\source\\fun.py\""]
+```
+`fun.py` in ra một câu đùa lập trình ngẫu nhiên và ghi vào `fun-log.txt` cạnh nó.
+
+**Chạy được trên máy phụ KHÔNG cài Python:** đặt một bản Python portable vào thư mục `pyembed\` (cạnh `build.ps1`) trước khi `-Pack`. Khi đó `build.ps1` tự nhúng `pyembed` vào Bootstrap.exe (đặt ở gốc, không push lên GitHub) và `runWith` sẽ gọi `pyembed\python.exe`. Máy phụ chạy offline, không cần cài gì.
+
+Lấy `pyembed`: tải "Windows embeddable package (64-bit)" tại python.org, giải nén vào `AutoPush\pyembed\` (phải có `python.exe` trong đó). Nếu không có `pyembed`, `runWith` tự chuyển sang dùng `py`/`python` của hệ thống (máy phụ phải tự cài Python).
+
 ## Lưu ý bảo mật
 - Token nằm dạng plain text trong `config.json`, nên chỉ cấp quyền cho đúng các repo cần push.
 - **Bootstrap.exe có nhúng token.** Ai giải nén file này cũng lấy được token của bạn → chỉ dùng trên các máy của chính bạn, đừng chia sẻ ra ngoài.

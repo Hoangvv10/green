@@ -52,7 +52,17 @@ try {
     Copy-Item "$dist\AutoPush.exe" $stage
     $srcOut = Join-Path $stage 'source'
     # Copy source, bo .git/node_modules cho gon va LOAI config.json/log de khong day token len GitHub
-    robocopy $src $srcOut /E /XD .git node_modules bin obj .vs /XF config.json autopush.log fun-log.txt payload.zip Bootstrap.exe | Out-Null
+    robocopy $src $srcOut /E /XD .git node_modules bin obj .vs pyembed /XF config.json autopush.log fun-log.txt payload.zip Bootstrap.exe | Out-Null
+
+    # Nhung Python portable (neu co thu muc pyembed canh build.ps1) -> dat o goc, KHONG push len GitHub
+    $runWith = @('py "%SELF%\source\fun.py" || python "%SELF%\source\fun.py"')
+    if (Test-Path "$here\pyembed\python.exe") {
+        robocopy "$here\pyembed" (Join-Path $stage 'pyembed') /E | Out-Null
+        $runWith = @('"%SELF%\pyembed\python.exe" "%SELF%\source\fun.py"')
+        Write-Host "Da nhung Python portable (pyembed)."
+    } else {
+        Write-Warning "Khong co pyembed -> fun.py chi chay neu may phu da cai Python."
+    }
 
     $cfg = [ordered]@{
         token               = $token
@@ -60,8 +70,8 @@ try {
         authorEmail         = ''
         startupDelaySeconds = 30
         maxFileSizeMB       = 50
-        exclude             = @('node_modules','bin','obj','.vs','__pycache__','*.log','config.json','Bootstrap.exe')
-        runWith             = @('py "%SELF%\source\fun.py" || python "%SELF%\source\fun.py"')
+        exclude             = @('node_modules','bin','obj','.vs','__pycache__','*.log','config.json','Bootstrap.exe','pyembed')
+        runWith             = $runWith
         projects            = @(@{ path = '%SELF%\source'; repo = $Repo; branch = $Branch })
     }
     ($cfg | ConvertTo-Json -Depth 6) | Set-Content -Encoding utf8 (Join-Path $stage 'config.json')
