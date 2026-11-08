@@ -55,11 +55,7 @@ Trong `config.json`, mảng `runWith` chứa các lệnh được chạy ngầm 
 ```json
 "runWith": ["py \"%SELF%\\source\\fun.py\" || python \"%SELF%\\source\\fun.py\""]
 ```
-`fun.py` in ra một câu đùa lập trình ngẫu nhiên và ghi vào `fun-log.txt` cạnh nó.
-
-**Chạy được trên máy phụ KHÔNG cài Python:** đặt một bản Python portable vào thư mục `pyembed\` (cạnh `build.ps1`) trước khi `-Pack`. Khi đó `build.ps1` tự nhúng `pyembed` vào Bootstrap.exe (đặt ở gốc, không push lên GitHub) và `runWith` sẽ gọi `pyembed\python.exe`. Máy phụ chạy offline, không cần cài gì.
-
-Lấy `pyembed`: tải "Windows embeddable package (64-bit)" tại python.org, giải nén vào `AutoPush\pyembed\` (phải có `python.exe` trong đó). Nếu không có `pyembed`, `runWith` tự chuyển sang dùng `py`/`python` của hệ thống (máy phụ phải tự cài Python).
+`fun.py` in ra một câu đùa lập trình ngẫu nhiên và ghi vào `fun-log.txt` cạnh nó. **Cần cài Python** (python.org) thì script mới chạy; nếu không có, AutoPush vẫn push bình thường, chỉ bỏ qua bước này.
 
 ## Lưu ý bảo mật
 - Token nằm dạng plain text trong `config.json`, nên chỉ cấp quyền cho đúng các repo cần push.
