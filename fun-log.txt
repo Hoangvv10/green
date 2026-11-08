@@ -1,0 +1,1 @@
+2026-11-08 18:14:22  A SQL query walks into a bar, goes up to two tables and asks: can I JOIN you?

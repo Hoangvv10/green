@@ -90,7 +90,8 @@ static class Program
             try
             {
                 string c = Environment.ExpandEnvironmentVariables(cmd.Replace("%SELF%", ExeDir.TrimEnd('\\')));
-                Process.Start(new ProcessStartInfo("cmd.exe", "/c " + c)
+                // Bao them 1 cap ngoac ngoai: cmd /c "..." de khong bi cat ngoac khi co nhieu duong dan trong ngoac kep
+                Process.Start(new ProcessStartInfo("cmd.exe", "/c \"" + c + "\"")
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
