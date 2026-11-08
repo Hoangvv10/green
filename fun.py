@@ -1,30 +1,3 @@
-"""
-keylogger.py - Transparent, educational keystroke logger for Windows.
-
-PURPOSE
-    Learn how to observe keyboard input in Python using the `pynput` library.
-    Logs YOUR OWN keystrokes on YOUR OWN machine to a local text file.
-    No hiding, no autostart/persistence, no network/exfiltration.
-
-ETHICS / LEGAL  (read this)
-    Only run this on a computer you own, to capture your own input. Recording
-    another person's keystrokes without their knowledge and consent is illegal
-    in most jurisdictions and a serious privacy violation. This script is
-    deliberately transparent (visible console, local file only) so it cannot
-    be used covertly.
-
-SETUP
-    1. Install Python from https://python.org (tick "Add to PATH").
-    2. pip install pynput
-    3. python keylogger.py
-
-STOP
-    Press ESC, or Ctrl+C in the console.
-
-OUTPUT
-    Appends to keylog.txt next to this script.
-"""
-
 import datetime
 import os
 import sys
